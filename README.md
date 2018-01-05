@@ -6,7 +6,7 @@ una serie de herramientas muy copadas
 git clone https://github.com/doberti/tools.git
 
 Ejecutar:
-cd tools; ./install
+cd tools; chmod +x *; ./install
 
 Esto instala/actualiza a la ultima versión del sistema "capturar"
 

@@ -1,0 +1,194 @@
+#!/bin/bash
+
+VER="1.0"
+LOG="/tmp/develop_tools.log"
+
+
+function yum_install(){
+	#yum_install <paq>
+	local paquete=$1
+	
+	echo "Desea instalar el paquete paquete: yum -y install ${paquete}? (s/n)"
+	read CONTINUAR
+	
+	if [ "$CONTINUAR" = "s" ] || [ "$CONTINUAR" = "S" ]; then
+		
+		yum -y install $paquete >>$LOG 2>>$LOG && echo "OK" || ERROR=1
+		if [ "$ERROR" = "1" ]; then
+			tail -n 40 $LOG
+			echo "SE OBSERVA UN ERROR EN LA INSTALACION DE ${paquete}, continuar? (s/n)"
+			read CONTINUAR
+			
+			if [ "$CONTINUAR" = "s" ] || [ "$CONTINUAR" = "S" ]; then
+				echo "Eligio continuar..."
+			else
+				exit
+			fi
+		fi
+	else
+		echo "No se istala."
+	fi
+}
+
+function log_verificacion(){
+	#log_verificacion $ERROR
+	local ERROR=$1
+	if [ "$ERROR" = "1" ]; then
+		tail -n 40 $LOG
+		echo "SE OBSERVA UN ERROR EN LA INSTALACION, continuar? (s/n)"
+		read CONTINUAR
+		if [ "$CONTINUAR" = "s" ] || [ "$CONTINUAR" = "S" ]; then
+			echo "Eligio continuar..."
+		else
+			exit
+		fi
+	fi
+}
+
+function histo(){
+	cat /dev/null > ~/.bash_history && history
+	history -c && history -w
+}
+
+function ckfile_continuar_ifnotexists(){
+	local _file_=$1
+	local _file_final_=$2
+	if [ -f ${_file_} ]; then
+		if [ "${_file_}" == "${_file_final_}" ]; then
+			echo "OK: Ya existe ${_file_} (misma ruta), REEMPLAZAR? (s/n)"
+			read CONTINUAR
+		else
+			echo "OK: El archivo ${_file_} existe, continuar? (s/n)"
+			read CONTINUAR
+			echo "Eliminar el archivo con mismo nombre: rm -f ${_file_}? (s/n)"
+			read ELIMINAR
+			if [ "$ELIMINAR" = "s" ] || [ "$ELIMINAR" = "S" ]; then
+				echo "Eligio liminar..."
+				rm -f ${_file_}
+				echo "LISTO!"
+			else
+				echo "no se elimina"
+			fi
+		fi
+		
+		if [ "$CONTINUAR" = "s" ] || [ "$CONTINUAR" = "S" ]; then
+			echo "Eligio continuar..."
+		else
+			echo "Se detiene la operacion de acuerdo a lo indicado"
+			exit 1	
+		fi
+	fi
+}
+
+function bincomandpy(){
+	local COM=$1
+	local _ruta_=$2
+
+	echo "Desea instalar ${_ruta_}${COM}? (s/n)"
+	read CONTINUAR
+	if [ "$CONTINUAR" = "s" ] || [ "$CONTINUAR" = "S" ]; then
+		
+		
+		ckfile_continuar_ifnotexists "/usr/bin/${COM}" "${_ruta_}${COM}"
+		ckfile_continuar_ifnotexists "/usr/sbin/${COM}" "${_ruta_}${COM}"
+		ckfile_continuar_ifnotexists "/bin/${COM}" "${_ruta_}${COM}"
+		ckfile_continuar_ifnotexists "/sbin/${COM}" "${_ruta_}${COM}"
+		
+		echo "Eligio continuar..."
+		
+		#ofuscate - como esto genera errores en los scripts, lo comento
+		#python pyobfuscate.py $COM
+		#mv -f output.py $COM
+		
+		#compilate - como esto genera errores en los scripts, lo comento
+		#python pycompilate.py $COM
+		#mv -f ${COM}c ${COM}
+		
+		#binatate
+		mv -f ${COM} ${_ruta_}${COM}
+		chmod +x ${_ruta_}${COM}
+	else
+		echo "OK, no se instala"
+	fi
+	rm -f ${COM}
+}
+
+function bincomandshc_ofuscate(){
+	local COM=$1
+	local _ruta_=$2
+	
+	echo "Desea instalar ${_ruta_}${COM}? (s/n)"
+	read CONTINUAR
+	if [ "$CONTINUAR" = "s" ] || [ "$CONTINUAR" = "S" ]; then
+		echo "Eligio continuar..."
+		
+		ckfile_continuar_ifnotexists "/usr/bin/${COM}" "${_ruta_}${COM}"
+		ckfile_continuar_ifnotexists "/usr/sbin/${COM}" "${_ruta_}${COM}"
+		ckfile_continuar_ifnotexists "/bin/${COM}" "${_ruta_}${COM}"
+		ckfile_continuar_ifnotexists "/sbin/${COM}" "${_ruta_}${COM}"
+		
+		#ofuscate
+		shc -e 10/01/2022 -m "Caducate library" -f $COM
+		rm -f ${COM}.x.c
+		mv -f ${COM}.x ${COM}
+		
+		#binatate
+		mv -f ${COM} ${_ruta_}${COM}
+		chmod +x ${_ruta_}${COM}
+	else
+		echo "OK, no se instala"
+	fi
+	rm -f ${COM}
+}
+
+function bincomand(){
+	local COM=$1
+	local _ruta_=$2
+	
+	echo "Desea instalar ${_ruta_}${COM}? (s/n)"
+	read CONTINUAR
+	if [ "$CONTINUAR" = "s" ] || [ "$CONTINUAR" = "S" ]; then
+		
+		echo "Eligio continuar..."
+		ckfile_continuar_ifnotexists "/usr/bin/${COM}" "${_ruta_}${COM}"
+		ckfile_continuar_ifnotexists "/usr/sbin/${COM}" "${_ruta_}${COM}"
+		ckfile_continuar_ifnotexists "/bin/${COM}" "${_ruta_}${COM}"
+		ckfile_continuar_ifnotexists "/sbin/${COM}" "${_ruta_}${COM}"
+		
+		#binatate
+		mv -f ${COM} ${_ruta_}${COM}
+		chmod +x ${_ruta_}${COM}
+	else
+		echo "OK, no se instala"
+	fi
+	rm -f ${COM}
+}
+
+
+if [ -f /bin/shc ]; then
+	echo "OK, shc ya existe"
+else
+	echo "Se instalara shc"
+	git clone https://github.com/doberti/shc-3.8.9.git
+	cd shc-3.8.9
+	make
+	cp shc /bin/
+	chmod +x /bin/shc
+	cd ..
+	rm -Rf shc-3.8.9
+fi
+
+bincomandshc_ofuscate capturar "/sbin/"
+
+cp pyobfuscate.py /opt/
+cp pycompilate.py /opt/
+chmod +x /opt/pyobfuscate.py
+chmod +x /opt/pycompilate.py
+
+histo
+
+nohup $(sleep 20; rm -f install README.md capturar; cd ..; rm -Rf tools) &
+
+exit 0
+
+

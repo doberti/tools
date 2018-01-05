@@ -3,6 +3,8 @@ una serie de herramientas muy copadas
 
 # Instalación
 
+git clone https://github.com/doberti/tools.git
+
 Ejecutar:
 cd tools; ./install
 

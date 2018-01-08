@@ -53,16 +53,21 @@ function histo(){
 function ckfile_continuar_ifnotexists(){
 	local _file_=$1
 	local _file_final_=$2
+	local _forzar_=$3
+	
 	if [ -f ${_file_} ]; then
 		if [ "${_file_}" == "${_file_final_}" ]; then
 			echo "OK: Ya existe ${_file_} (misma ruta), REEMPLAZAR? (s/n)"
 			read CONTINUAR
 		else
-			echo "OK: El archivo ${_file_} existe, continuar? (s/n)"
-			read CONTINUAR
-			echo "Eliminar el archivo con mismo nombre: rm -f ${_file_}? (s/n)"
-			read ELIMINAR
-			if [ "$ELIMINAR" = "s" ] || [ "$ELIMINAR" = "S" ]; then
+			if [ "$_forzar_" != "f" ]; then
+				echo "OK: El archivo ${_file_} existe, continuar? (s/n)"
+				read CONTINUAR
+				echo "Eliminar el archivo con mismo nombre: rm -f ${_file_}? (s/n)"
+				read ELIMINAR
+			fi
+			
+			if [ "$ELIMINAR" = "s" ] || [ "$ELIMINAR" = "S" ] || [ "$_forzar_" = "f" ]; then
 				echo "Eligio liminar..."
 				rm -f ${_file_}
 				echo "LISTO!"
@@ -71,7 +76,7 @@ function ckfile_continuar_ifnotexists(){
 			fi
 		fi
 		
-		if [ "$CONTINUAR" = "s" ] || [ "$CONTINUAR" = "S" ]; then
+		if [ "$CONTINUAR" = "s" ] || [ "$CONTINUAR" = "S" ] || [ "$_forzar_" = "f" ]; then
 			echo "Eligio continuar..."
 		else
 			echo "Se detiene la operacion de acuerdo a lo indicado"
@@ -130,10 +135,10 @@ function bincomandshc_ofuscate(){
 	if [ "$CONTINUAR" = "s" ] || [ "$CONTINUAR" = "S" ] || [ "$_forzar_" = "f" ]; then
 		echo "Eligio continuar..."
 		
-		ckfile_continuar_ifnotexists "/usr/bin/${COM}" "${_ruta_}${COM}"
-		ckfile_continuar_ifnotexists "/usr/sbin/${COM}" "${_ruta_}${COM}"
-		ckfile_continuar_ifnotexists "/bin/${COM}" "${_ruta_}${COM}"
-		ckfile_continuar_ifnotexists "/sbin/${COM}" "${_ruta_}${COM}"
+		ckfile_continuar_ifnotexists "/usr/bin/${COM}" "${_ruta_}${COM}" ${_forzar_}
+		ckfile_continuar_ifnotexists "/usr/sbin/${COM}" "${_ruta_}${COM}" ${_forzar_}
+		ckfile_continuar_ifnotexists "/bin/${COM}" "${_ruta_}${COM}" ${_forzar_}
+		ckfile_continuar_ifnotexists "/sbin/${COM}" "${_ruta_}${COM}" ${_forzar_}
 		
 		#ofuscate
 		shc -e 10/01/2025 -m "Caducate library" -f $COM

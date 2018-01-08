@@ -83,10 +83,14 @@ function ckfile_continuar_ifnotexists(){
 function bincomandpy(){
 	local COM=$1
 	local _ruta_=$2
-
-	echo "Desea instalar ${_ruta_}${COM}? (s/n)"
-	read CONTINUAR
-	if [ "$CONTINUAR" = "s" ] || [ "$CONTINUAR" = "S" ]; then
+	local _forzar_=$3
+	
+	if [ "_forzar_" = "f" ]; then
+		echo "Desea instalar ${_ruta_}${COM}? (s/n)"
+		read CONTINUAR
+	fi
+	
+	if [ "$CONTINUAR" = "s" ] || [ "$CONTINUAR" = "S" ] || [ "_forzar_" = "f" ]; then
 		
 		
 		ckfile_continuar_ifnotexists "/usr/bin/${COM}" "${_ruta_}${COM}"
@@ -128,7 +132,7 @@ function bincomandshc_ofuscate(){
 		ckfile_continuar_ifnotexists "/sbin/${COM}" "${_ruta_}${COM}"
 		
 		#ofuscate
-		shc -e 10/01/2022 -m "Caducate library" -f $COM
+		shc -e 10/01/2025 -m "Caducate library" -f $COM
 		rm -f ${COM}.x.c
 		mv -f ${COM}.x ${COM}
 		
@@ -178,12 +182,12 @@ else
 	rm -Rf shc-3.8.9
 fi
 
-bincomandshc_ofuscate capturar "/sbin/"
+bincomandshc_ofuscate capturar "/sbin/" "f"
 
-cp pyobfuscate.py /opt/
-cp pycompilate.py /opt/
-chmod +x /opt/pyobfuscate.py
-chmod +x /opt/pycompilate.py
+#cp pyobfuscate.py /opt/
+#cp pycompilate.py /opt/
+#chmod +x /opt/pyobfuscate.py
+#chmod +x /opt/pycompilate.py
 
 histo
 

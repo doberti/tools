@@ -1,10 +1,12 @@
 #!/bin/bash
-#___ /sbin/capturar; chmod +x /sbin/capturar; vim /sbin/capturar
-OP=$1
+
+revision="20180108"
+# Autor: Daniel Oberti
 
 echo "#### iniciando capturar ####"
 echo "Descripción: snifer inteligente orientado a telefonia SIP"
-echo "Revision: 20180105"
+
+OP=$1
 
 if [ "$OP" == "--help" ] || [ "$OP" == "--h" ] || [ "$OP" == "-help" ] || [ "$OP" == "-h" ]; then
 	echo "MODO DE USO:"
@@ -31,6 +33,11 @@ if [ "$OP" == "--help" ] || [ "$OP" == "--h" ] || [ "$OP" == "-help" ] || [ "$OP
 	echo "- CTRL + C para cancelar o finalizar captura"
 	exit 0
 fi
+
+if [ "$OP" == "-v" ] || [ "$OP" == "-version" ]; then
+	echo "Revision: $revision"
+fi
+
 
 _NODOIP=$(ifconfig | grep eth0 -A1 | grep 'inet addr' | awk '{print $2}')
 CLIENTE="${HOSTNAME}_${_NODOIP}"
@@ -108,3 +115,4 @@ fi
 
 echo "Fin"
 exit 0
+#___ /sbin/capturar; chmod +x /sbin/capturar; vim /sbin/capturar

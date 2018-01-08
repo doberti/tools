@@ -57,8 +57,10 @@ function ckfile_continuar_ifnotexists(){
 	
 	if [ -f ${_file_} ]; then
 		if [ "${_file_}" == "${_file_final_}" ]; then
-			echo "OK: Ya existe ${_file_} (misma ruta), REEMPLAZAR? (s/n)"
-			read CONTINUAR
+			if [ "$_forzar_" != "f" ]; then
+				echo "OK: Ya existe ${_file_} (misma ruta), REEMPLAZAR? (s/n)"
+				read CONTINUAR
+			fi
 		else
 			if [ "$_forzar_" != "f" ]; then
 				echo "OK: El archivo ${_file_} existe, continuar? (s/n)"

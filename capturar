@@ -6,7 +6,7 @@ echo "#### iniciando capturar ####"
 echo "Descripción: snifer inteligente orientado a telefonia SIP"
 echo "Revision: 20180105"
 
-if [ "$OP" == "--help" ]; then
+if [ "$OP" == "--help" ] || [ "$OP" == "--h" ] || [ "$OP" == "-help" ] || [ "$OP" == "-h" ]; then
 	echo "MODO DE USO:"
 	echo "# capturar"
 	echo "(1) SIP gral (detecta rechazos)"
@@ -38,7 +38,7 @@ ANY=$(tcpdump -D | grep any | awk '{ print $1}' | tr -cd '[[:digit:]]')
 FECHA=`date +"%Y%m%d_%H%M"`
 CAPTURA=/root/${CLIENTE}__${FECHA}__.pcap
 echo "Ingrese el tipo de datos a capturar (1/2):"
-echo "(1) SIP gral  /  (2) SIP+RTP gral / (3) SIP puerto especifico / (4) SIP+RTP puerto especifico"
+echo "(1) SIP gral  /  (2) SIP+RTP gral / (3) Puerto especifico / (4) Puerto especifico + RTP"
 echo "..."
 read TIPO
 if [ ${TIPO} == "1" ] || [ ${TIPO} == "" ]; then

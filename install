@@ -120,10 +120,14 @@ function bincomandpy(){
 function bincomandshc_ofuscate(){
 	local COM=$1
 	local _ruta_=$2
+	local _forzar_=$3
 	
-	echo "Desea instalar ${_ruta_}${COM}? (s/n)"
-	read CONTINUAR
-	if [ "$CONTINUAR" = "s" ] || [ "$CONTINUAR" = "S" ]; then
+	if [ "_forzar_" = "f" ]; then
+		echo "Desea instalar ${_ruta_}${COM}? (s/n)"
+		read CONTINUAR
+	fi
+	
+	if [ "$CONTINUAR" = "s" ] || [ "$CONTINUAR" = "S" ] || [ "_forzar_" = "f" ]; then
 		echo "Eligio continuar..."
 		
 		ckfile_continuar_ifnotexists "/usr/bin/${COM}" "${_ruta_}${COM}"

@@ -122,7 +122,7 @@ function bincomandshc_ofuscate(){
 	local _ruta_=$2
 	local _forzar_=$3
 	
-	if [ "$_forzar_" = "f" ]; then
+	if ![ "$_forzar_" = "f" ]; then
 		echo "Desea instalar ${_ruta_}${COM}? (s/n)"
 		read CONTINUAR
 	fi

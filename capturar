@@ -36,6 +36,7 @@ fi
 
 if [ "$OP" == "-v" ] || [ "$OP" == "-version" ]; then
 	echo "Revision: $revision"
+	exit 0
 fi
 
 

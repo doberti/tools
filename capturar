@@ -8,6 +8,27 @@ echo "Revision: 20180105"
 
 if [ "$OP" == "--help" ]; then
 	echo "MODO DE USO:"
+	echo "# capturar"
+	echo "(1) SIP gral (detecta rechazos)"
+	echo "- Cant. de paquetes (ej: 1000) ó “n” sin cantidad."
+	echo "- Cant. De segundos (ej: 60) ó “n” sin cantidad."
+	echo "- IP a capturar (x.x.x.x;y.y.y.y;...) ó “n” todas las IP"
+	echo "- CTRL + C para cancelar o finalizar captura"
+	echo "(2) SIP+RTP (incluye audio)"
+	echo "- Cant. de paquetes (ej: 1000) ó “n” sin cantidad."
+	echo "- Cant. De segundos (ej: 60) ó “n” sin cantidad."
+	echo "- IP a capturar (x.x.x.x;y.y.y.y;...) ó “n” todas las IP"
+	echo "- CTRL + C para cancelar o finalizar captura"
+	echo "(3) SIP puerto especifico (rechazos + puerto SIP definido, ej. 5068)"
+	echo "- Puerto SIP a capturar (Ej: 5068)"
+	echo "- Cant. De segundos (ej: 60) ó “n” sin cantidad."
+	echo "- IP a capturar (x.x.x.x;y.y.y.y;...) ó “n” todas las IP"
+	echo "- CTRL + C para cancelar o finalizar captura"
+	echo "(4) SIP+RTP puerto especifico (incluye audio + puerto SIP definido ej. 5068)"
+	echo "- Puerto SIP a capturar (Ej: 5068)"
+	echo "- Cant. De segundos (ej: 60) ó “n” sin cantidad."
+	echo "- IP a capturar (x.x.x.x;y.y.y.y;...) ó “n” todas las IP"
+	echo "- CTRL + C para cancelar o finalizar captura"
 	exit 0
 fi
 

@@ -3,10 +3,11 @@ una serie de herramientas muy copadas
 
 # Instalación
 
-git clone https://github.com/doberti/tools.git
+
 
 Ejecutar:
-cd tools; chmod +x *; ./install
+
+git clone https://github.com/doberti/tools.git && cd tools && chmod +x * && ./install
 
 Esto instala/actualiza a la ultima versión del sistema "capturar"
 

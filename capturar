@@ -1,12 +1,15 @@
 #!/bin/bash
 
-revision="20180108"
 # Autor: Daniel Oberti
+revision="20180109"
 
 echo "#### iniciando capturar ####"
 echo "Descripción: snifer inteligente orientado a telefonia SIP"
 
 OP=$1
+DURACION=$2
+
+TIPO="nadadenada"
 
 if [ "$OP" == "--help" ] || [ "$OP" == "--h" ] || [ "$OP" == "-help" ] || [ "$OP" == "-h" ]; then
 	echo "MODO DE USO:"
@@ -32,23 +35,29 @@ if [ "$OP" == "--help" ] || [ "$OP" == "--h" ] || [ "$OP" == "-help" ] || [ "$OP
 	echo "- IP a capturar (x.x.x.x;y.y.y.y;...) ó “n” todas las IP"
 	echo "- CTRL + C para cancelar o finalizar captura"
 	exit 0
-fi
-
-if [ "$OP" == "-v" ] || [ "$OP" == "-version" ]; then
+elif [ "$OP" == "-v" ] || [ "$OP" == "-version" ]; then
 	echo "Revision: $revision"
 	exit 0
+elif [ "$OP" == "1" ] || [ "$OP" == "2" ] || [ "$OP" == "3" ] || [ "$OP" == "4" ] || [ "$OP" == "5" ]; then
+	TIPO="$OP"
 fi
-
 
 _NODOIP=$(ifconfig | grep eth0 -A1 | grep 'inet addr' | awk '{print $2}')
 CLIENTE="${HOSTNAME}_${_NODOIP}"
 ANY=$(tcpdump -D | grep any | awk '{ print $1}' | tr -cd '[[:digit:]]')
 FECHA=`date +"%Y%m%d_%H%M"`
 CAPTURA=/root/${CLIENTE}__${FECHA}__.pcap
-echo "Ingrese el tipo de datos a capturar (1/2):"
-echo "(1) SIP gral  /  (2) SIP+RTP gral / (3) Puerto especifico / (4) Puerto especifico + RTP"
-echo "..."
-read TIPO
+
+MENU="OPCIONES: (1) SIP gral  /  (2) SIP+RTP gral / (3) Puerto especifico / (4) Puerto especifico + RTP / (5) SIP 5060 + RTP"
+echo $MENU
+if [ "$OP" != "1" ] && [ "$OP" != "2" ] && [ "$OP" != "3" ] && [ "$OP" != "4" ]&& [ "$OP" != "5" ]; then
+	echo "Ingrese el tipo de datos a capturar (1/2/3/4/5):"
+	echo "..."
+	read TIPO
+else
+	echo "Selecciono: $TIPO"
+fi
+
 if [ ${TIPO} == "1" ] || [ ${TIPO} == "" ]; then
 	TIPO=" ( udp port 5060 or udp port 5061 or udp port 5062 or udp port 5063 or udp port 5064 or udp port 5065 or udp port 5066 or udp port 5067 or udp port 5068 or udp port 5069 or udp port 5070 or udp port 5071 ) "
 elif [ ${TIPO} == "2" ]; then
@@ -57,35 +66,47 @@ elif [ ${TIPO} == "3" ]; then
 	echo "Ingrese el puerto SIP a usar (ej:5060)"
 	read TIPO
 	TIPO=" ( udp port ${TIPO} ) "
-else
+elif [ ${TIPO} == "4" ]; then
 	echo "Ingrese el puerto SIP a usar (ej:5060)"
 	read TIPO
 	TIPO=" ( udp port ${TIPO} or udp portrange 10000-60000 ) "
+elif [ ${TIPO} == "5" ]; then
+	TIPO=" ( udp port 5060 or udp portrange 10000-60000 ) "
 fi
 
-echo "Ingrese cantidad maxima de paquetes a capturar (ej: 5000) o en su defecto coloque el caracter (n) para no usar este filtro:"
-echo "..."
-read MAX_CANT_PAQ
+if [ "$DURACION" == "" ]; then
+	echo "Ingrese cantidad maxima de paquetes a capturar (ej: 5000) o en su defecto coloque el caracter (n) para no usar este filtro:"
+	echo "..."
+	read MAX_CANT_PAQ
 
-if [ "$MAX_CANT_PAQ" == "n" ] || [ "$MAX_CANT_PAQ" == "" ]; then
-        MAX_CANT_PAQ=""
-else
-        MAX_CANT_PAQ=" -c ${MAX_CANT_PAQ} "
-fi
+	if [ "$MAX_CANT_PAQ" == "n" ] || [ "$MAX_CANT_PAQ" == "" ]; then
+		MAX_CANT_PAQ=""
+	else
+		MAX_CANT_PAQ=" -c ${MAX_CANT_PAQ} "
+	fi
 
-echo "Ingrese cantidad maxima de tiempo (en segundos) para la captura o en su defecto coloque el caracter (n) para no usar este filtro:"
-echo "..."
-read MAX_TIME
+	echo "Ingrese cantidad maxima de tiempo (en segundos) para la captura o en su defecto coloque el caracter (n) para no usar este filtro:"
+	echo "..."
+	read MAX_TIME
 
-if [ "$MAX_TIME" == "n" ] || [ "$MAX_TIME" == "" ]; then
-        MAX_TIME=""
-else
-        MAX_TIME=" -G ${MAX_TIME} "
+	if [ "$MAX_TIME" == "n" ] || [ "$MAX_TIME" == "" ]; then
+		MAX_TIME=""
+	else
+		MAX_TIME=" -G ${MAX_TIME} "
+	fi
+elif [ $DURACION < 4000 ]; then
+	MAX_CANT_PAQ=" -G $DURACION "
+elif [ $DURACION > 4000 ]; then
+	MAX_CANT_PAQ=" -c $DURACION "
 fi
 
 IP=""
+echo "********************************************************************"
+echo "SIP:"
 rasterisk -x "sip show peers" | awk '{ print $2 "  " $1 }' | grep -v Unspecified | awk {' if (int(substr($2,0,1)) == 0) print '}
-
+echo "IAX2:"
+rasterisk -x "iax2 show peers" | awk '{ print $2 "  " $1 }' | grep -v Unspecified | awk {' if (int(substr($2,0,1)) == 0) print '}
+echo "********************************************************************"
 echo "Ingrese la/s IP (x.x.x.x;y.y.y.y;...) que desea capturar o en su defecto coloque el caracter (n) para no usar este filtro"
 echo "..."
 read IP

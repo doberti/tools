@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Autor: Daniel Oberti
-revision="20180109"
+revision="20180110"
 
 echo "#### iniciando capturar ####"
 echo "Descripción: snifer inteligente orientado a telefonia SIP"

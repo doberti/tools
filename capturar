@@ -10,36 +10,62 @@ OP=$1
 DURACION=$2
 
 TIPO="nadadenada"
+MENU="OPCIONES DE CAPTURA: (1) SIP gral  /  (2) SIP+RTP gral / (3) Puerto UDP especifico / (4) Puerto UDP especifico + RTP / (5) SIP 5060 + RTP"
 
 if [ "$OP" == "--help" ] || [ "$OP" == "--h" ] || [ "$OP" == "-help" ] || [ "$OP" == "-h" ]; then
+	echo "#### capturar ####"
 	echo "MODO DE USO:"
-	echo "# capturar"
-	echo "(1) SIP gral (detecta rechazos)"
-	echo "- Cant. de paquetes (ej: 1000) ó “n” sin cantidad."
-	echo "- Cant. De segundos (ej: 60) ó “n” sin cantidad."
-	echo "- IP a capturar (x.x.x.x;y.y.y.y;...) ó “n” todas las IP"
-	echo "- CTRL + C para cancelar o finalizar captura"
-	echo "(2) SIP+RTP (incluye audio)"
-	echo "- Cant. de paquetes (ej: 1000) ó “n” sin cantidad."
-	echo "- Cant. De segundos (ej: 60) ó “n” sin cantidad."
-	echo "- IP a capturar (x.x.x.x;y.y.y.y;...) ó “n” todas las IP"
-	echo "- CTRL + C para cancelar o finalizar captura"
-	echo "(3) SIP puerto especifico (rechazos + puerto SIP definido, ej. 5068)"
-	echo "- Puerto SIP a capturar (Ej: 5068)"
-	echo "- Cant. De segundos (ej: 60) ó “n” sin cantidad."
-	echo "- IP a capturar (x.x.x.x;y.y.y.y;...) ó “n” todas las IP"
-	echo "- CTRL + C para cancelar o finalizar captura"
-	echo "(4) SIP+RTP puerto especifico (incluye audio + puerto SIP definido ej. 5068)"
-	echo "- Puerto SIP a capturar (Ej: 5068)"
-	echo "- Cant. De segundos (ej: 60) ó “n” sin cantidad."
-	echo "- IP a capturar (x.x.x.x;y.y.y.y;...) ó “n” todas las IP"
-	echo "- CTRL + C para cancelar o finalizar captura"
+	echo "capturar [ARGUMENTOS]"
+	echo
+	echo "ARGUMENTOS:"
+	echo "		-v/-version: Indica la revision a la que pertenece el comando."
+	echo
+	echo "		-u/-a: Realiza una actualizacion/update a la revision mas nueva."
+	echo
+	echo "		<TIPO> <DURACION>: "
+	echo "		DURACION--> Se interpreta como segundos cuando es menor o igual a 3600 de lo contrario se interpreta como paquetes)"
+	echo "		TIPO	--> (1/2/3/4/5) Atajo a $MENU"
+	echo
+	echo "		$MENU"
+	echo "		(para revisar rechazos de proveedor usar la opcion "1")"
+	echo "		(1) SIP gral (captura los puertos 5060 hasta 5070)"
+	echo "		Luego solicita:"	
+	echo "		- Cant. de paquetes (ej: 1000) ó “n” sin cantidad."
+	echo "		- Cant. De segundos (ej: 60) ó “n” sin cantidad."
+	echo "		- IP a capturar (x.x.x.x;y.y.y.y;...) ó “n” todas las IP"
+	echo "		(2) SIP+RTP (captura los puertos 5060 hasta 5070 + audio)"
+	echo "		Luego solicita:"
+	echo "		- Cant. de paquetes (ej: 1000) ó “n” sin cantidad."
+	echo "		- Cant. De segundos (ej: 60) ó “n” sin cantidad."
+	echo "		- IP a capturar (x.x.x.x;y.y.y.y;...) ó “n” todas las IP"
+	echo "		(3) SIP puerto especifico (captura puerto UDP definido, ej. 5068)"
+	echo "		Luego solicita:"
+	echo "		- Puerto SIP a capturar (Ej: 5068)"
+	echo "		- Cant. De segundos (ej: 60) ó “n” sin cantidad."
+	echo "		- IP a capturar (x.x.x.x;y.y.y.y;...) ó “n” todas las IP"
+	echo "		(4) Puerto especifico + RTP (incluye audio + puerto UDP definido. Ej. 5060 [SIP] / 4568 [IAX2])"
+	echo "		Luego solicita:"
+	echo "		- Puerto SIP a capturar (Ej: 5068)"
+	echo "		- Cant. De segundos (ej: 60) ó “n” sin cantidad."
+	echo "		- IP a capturar (x.x.x.x;y.y.y.y;...) ó “n” todas las IP"
+	echo "		(5) SIP 5060 + RTP (incluye audio + puerto SIP 5060)"
+	echo "		Luego solicita:"
+	echo "		- Puerto SIP a capturar (Ej: 5068)"
+	echo "		- Cant. De segundos (ej: 60) ó “n” sin cantidad."
+	echo "		- IP a capturar (x.x.x.x;y.y.y.y;...) ó “n” todas las IP"
+	echo "	NOTA: "
+	echo "		Puede usar CTRL + C para cancelar o finalizar captura antes de lo programado."
+	echo "###################################"
 	exit 0
 elif [ "$OP" == "-v" ] || [ "$OP" == "-version" ]; then
 	echo "Revision: $revision"
 	exit 0
 elif [ "$OP" == "1" ] || [ "$OP" == "2" ] || [ "$OP" == "3" ] || [ "$OP" == "4" ] || [ "$OP" == "5" ]; then
 	TIPO="$OP"
+elif [ "$OP" == "-a" ] || [ "$OP" == "-u" ] ; then
+	echo "Actualizando..."
+	nohup git clone https://github.com/doberti/tools.git && cd tools && chmod +x * && ./install && cd .. &
+	exit 0
 fi
 
 _NODOIP=$(ifconfig | grep eth0 -A1 | grep 'inet addr' | awk '{print $2}')
@@ -48,7 +74,7 @@ ANY=$(tcpdump -D | grep any | awk '{ print $1}' | tr -cd '[[:digit:]]')
 FECHA=`date +"%Y%m%d_%H%M"`
 CAPTURA=/root/${CLIENTE}__${FECHA}__.pcap
 
-MENU="OPCIONES: (1) SIP gral  /  (2) SIP+RTP gral / (3) Puerto especifico / (4) Puerto especifico + RTP / (5) SIP 5060 + RTP"
+
 echo $MENU
 if [ "$OP" != "1" ] && [ "$OP" != "2" ] && [ "$OP" != "3" ] && [ "$OP" != "4" ]&& [ "$OP" != "5" ]; then
 	echo "Ingrese el tipo de datos a capturar (1/2/3/4/5):"
@@ -94,9 +120,9 @@ if [ "$DURACION" == "" ]; then
 	else
 		MAX_TIME=" -G ${MAX_TIME} "
 	fi
-elif [ $DURACION < 4000 ]; then
+elif [ $DURACION < 3600 ]; then
 	MAX_CANT_PAQ=" -G $DURACION "
-elif [ $DURACION > 4000 ]; then
+elif [ $DURACION > 3600 ]; then
 	MAX_CANT_PAQ=" -c $DURACION "
 fi
 

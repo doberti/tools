@@ -13,7 +13,7 @@ TIPO="nadadenada"
 MENU="OPCIONES DE CAPTURA: (1) SIP gral  /  (2) SIP+RTP gral / (3) Puerto UDP especifico / (4) Puerto UDP especifico + RTP / (5) SIP 5060 + RTP"
 
 if [ "$OP" == "--help" ] || [ "$OP" == "--h" ] || [ "$OP" == "-help" ] || [ "$OP" == "-h" ]; then
-	echo "#### capturar ####"
+	echo "######### capturar #########"
 	echo "MODO DE USO:"
 	echo "capturar [ARGUMENTOS]"
 	echo
